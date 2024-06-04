@@ -1,0 +1,96 @@
+
+```sh
+export OAI_CONFIG_LIST=$(cat ./OAI_CONFIG_LIST)
+cd tests/benchmark_test/CTFAIA
+autogenbench run Tasks/claude-3-haiku-20240307-BasicTwoAgents__ctfaia__all__20240602.jsonl
+```
+```sh
+cd tests/benchmark_test/CTFAIA
+autogenbench tabulate Results/claude-3-haiku-20240307-BasicTwoAgents__ctfaia__all__20240602 -o
+```
+
+
+```sh
+export OAI_CONFIG_LIST=$(cat ./OAI_CONFIG_LIST)
+cd tests/benchmark_test/CTFAIA
+autogenbench run Tasks/CodeLlama-70b-Python-hf-BasicTwoAgents__ctfaia__all__20240602.jsonl
+```
+```sh
+cd tests/benchmark_test/CTFAIA
+autogenbench tabulate Results/CodeLlama-70b-Python-hf-BasicTwoAgents__ctfaia__all__20240602 -o
+```
+
+
+```sh
+export OAI_CONFIG_LIST=$(cat ./OAI_CONFIG_LIST)
+cd tests/benchmark_test/CTFAIA
+autogenbench run Tasks/gemini-1.5-pro-BasicTwoAgents__ctfaia__all__20240602.jsonl
+```
+```sh
+cd tests/benchmark_test/CTFAIA
+autogenbench tabulate Results/gemini-1.5-pro-BasicTwoAgents__ctfaia__all__20240602 -o
+```
+
+
+```sh
+export OAI_CONFIG_LIST=$(cat ./OAI_CONFIG_LIST)
+cd tests/benchmark_test/CTFAIA
+autogenbench run Tasks/gpt-3.5-BasicTwoAgents__ctfaia__all__20240602.jsonl
+```
+```sh
+cd tests/benchmark_test/CTFAIA
+autogenbench tabulate Results/gpt-3.5-BasicTwoAgents__ctfaia__all__20240602 -o
+```
+
+
+```sh
+export OAI_CONFIG_LIST=$(cat ./OAI_CONFIG_LIST)
+cd tests/benchmark_test/CTFAIA
+autogenbench run Tasks/gpt-4o-BasicTwoAgents__ctfaia__all__20240602.jsonl
+```
+```sh
+cd tests/benchmark_test/CTFAIA
+autogenbench tabulate Results/gpt-4o-BasicTwoAgents__ctfaia__all__20240602 -o
+```
+
+
+```sh
+export OAI_CONFIG_LIST=$(cat ./OAI_CONFIG_LIST)
+cd tests/benchmark_test/CTFAIA
+autogenbench run Tasks/CodeLlama-70b-Instruct-hf__ctfaia__all__20240602.jsonl
+```
+```sh
+cd tests/benchmark_test/CTFAIA
+autogenbench tabulate Results/CodeLlama-70b-Instruct-hf__ctfaia__all__20240602 -o
+```
+
+
+```sh
+export OAI_CONFIG_LIST=$(cat ./OAI_CONFIG_LIST)
+cd tests/benchmark_test/CTFAIA
+autogenbench run Tasks/Mixtral-8x22B-Instruct-v0.1-BasicTwoAgents__ctfaia__all__20240602.jsonl
+```
+```sh
+cd tests/benchmark_test/CTFAIA
+autogenbench tabulate Results/Mixtral-8x22B-Instruct-v0.1-BasicTwoAgents__ctfaia__all__20240602 -o
+```
+
+
+```sh
+export OAI_CONFIG_LIST=$(cat ./OAI_CONFIG_LIST)
+cd tests/benchmark_test/CTFAIA
+autogenbench run Tasks/Qwen1.5-110B-Chat-BasicTwoAgents__ctfaia__all__20240602.jsonl
+```
+```sh
+cd tests/benchmark_test/CTFAIA
+autogenbench tabulate Results/Qwen1.5-110B-Chat-BasicTwoAgents__ctfaia__all__20240602 -o
+```
+
+
+
+
+
+
+
+
+

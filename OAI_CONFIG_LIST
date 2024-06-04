@@ -1,20 +1,42 @@
 [
     {
         "model": "gpt-4o",
-        "api_key": "sk-ZjwbSXgX8xHFbemVB565E5F133B1496d89F8750046CeD1D3",
+        "api_key": "sk-b4NgqRHyA1zeGuEZA8851a9d187346418d2d75C532C97f73",
         "base_url": "https://api.kwwai.top/v1"
     },
     {
-        "model": "gpt-4-turbo",
-        "api_key": "sk-ZjwbSXgX8xHFbemVB565E5F133B1496d89F8750046CeD1D3",
-        "tags": ["llm"],
+        "model": "gpt-3.5-turbo",
+        "api_key": "sk-b4NgqRHyA1zeGuEZA8851a9d187346418d2d75C532C97f73",
         "base_url": "https://api.kwwai.top/v1"
     },
     {
-        "model": "gpt-4-turbo",
-        "api_key": "sk-ZjwbSXgX8xHFbemVB565E5F133B1496d89F8750046CeD1D3",
-        "tags": ["mlm"],
-        "max_tokens": 1000,
+        "model": "gemini-1.5-pro",
+        "api_key": "sk-b4NgqRHyA1zeGuEZA8851a9d187346418d2d75C532C97f73",
         "base_url": "https://api.kwwai.top/v1"
+    },
+    {
+        "model": "claude-3-haiku-20240307",
+        "api_key": "sk-b4NgqRHyA1zeGuEZA8851a9d187346418d2d75C532C97f73",
+        "base_url": "https://api.kwwai.top/v1"
+    },
+    {
+        "model": "Qwen/Qwen1.5-110B-Chat",
+        "api_key": "57b5d1866303c3f9a4930f308f6909a883e60ee477985929033dd6570d5ce9ca",
+        "base_url": "https://api.together.xyz/v1"
+    },
+    {
+        "model": "meta-llama/Llama-3-70b-chat-hf",
+        "api_key": "57b5d1866303c3f9a4930f308f6909a883e60ee477985929033dd6570d5ce9ca",
+        "base_url": "https://api.together.xyz/v1"
+    },
+    {
+        "model": "codellama/CodeLlama-70b-Instruct-hf",
+        "api_key": "57b5d1866303c3f9a4930f308f6909a883e60ee477985929033dd6570d5ce9ca",
+        "base_url": "https://api.together.xyz/v1"
+    },
+    {
+        "model": "mistralai/Mixtral-8x22B-Instruct-v0.1",
+        "api_key": "57b5d1866303c3f9a4930f308f6909a883e60ee477985929033dd6570d5ce9ca",
+        "base_url": "https://api.together.xyz/v1"
     }
 ]
