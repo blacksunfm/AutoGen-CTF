@@ -11,7 +11,13 @@ from autogen import Agent, ConversableAgent, GroupChatManager, GroupChat, OpenAI
 
 def remove_code_block_markers(input_text):
     # Remove ```json and ``` markers
-    return re.sub(r'```json|```', '', input_text).strip()
+    # input_text = re.sub(r'```json|```', '', input_text).strip()
+    pattern = r'\{.*\}'
+    match = re.search(pattern, input_text, re.DOTALL)
+    if match:
+        return match.group(0)
+    else:
+        exit()
 
 
 class AttackAgent(ConversableAgent):

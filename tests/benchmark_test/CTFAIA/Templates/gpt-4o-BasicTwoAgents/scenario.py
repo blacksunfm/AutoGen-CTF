@@ -27,9 +27,9 @@ config_list = autogen.config_list_from_json("OAI_CONFIG_LIST", filter_dict={"mod
     # "Qwen/Qwen1.5-110B-Chat",
     # "meta-llama/Llama-3-70b-chat-hf",
     # "gpt-4-turbo",
-    # "gpt-4o",
+    "gpt-4o",
     # "gpt-4-turbo-preview",
-     "gpt-3.5-turbo",
+    #  "gpt-3.5-turbo",
 ]})
 
 ###################################################################################################################################

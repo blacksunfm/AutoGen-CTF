@@ -15,7 +15,7 @@ def normalize_answer(a):
     # Replace multiple spaces with one space
     # Remove trailing punctuation
     # return re.sub(r"[\.\!\?]+$", "", re.sub(r"\s+", " ", a.strip().lower()))
-    if isinstance(a,list):
+    if isinstance(a, list):
         a = ''.join(a)
     return a.strip().lower()
 
@@ -63,7 +63,7 @@ def scorer(instance_dir):
         comprehension = 0
         # 记录得分情况
         chat_score_log_file = os.path.join(instance_dir, "chat_score_log.txt")
-        with open(chat_score_log_file, 'a') as score_log:
+        with open(chat_score_log_file, 'a', encoding='utf-8') as score_log:
             # 读取chat_score
             chat_score_file = os.path.join(instance_dir, "chat_score.txt")
             if not os.path.isfile(chat_score_file):
@@ -72,7 +72,10 @@ def scorer(instance_dir):
             with open(chat_score_file, "rt") as fh:
                 content = fh.read().strip()
                 print(content)
-                chat_score = eval(content)
+                try:
+                    chat_score = eval(content)
+                except:
+                    print(instance_dir)
             for i, score_item in enumerate(chat_score):
                 m = re.search(rf"Answer{i}:(.*?)\n", console_log, re.DOTALL)
                 if m:
@@ -243,6 +246,28 @@ def custom_tabulate(args, scorer=default_scorer, exclude_dir_names=EXCLUDE_DIR_N
 
         # Print out alpha-version warning
         sys.stderr.write("\n" + warning + "\n\n")
+
+    # 打印评价指标
+    print(all_results)
+    print('done task: ' + str(len(all_results)))
+    success_rate = 0
+    completion_level = 0
+    expertise = 0
+    reasoning = 0
+    comprehension = 0
+    sum_num = len(all_results)
+    for i in all_results:
+        j = i[1]
+        completion_level += j[0]
+        expertise += j[1]
+        reasoning += j[2]
+        comprehension += j[3]
+        if j[0] == 10:
+            success_rate += 1
+    print("****" * 50)
+    print(
+        f"success_rate: {success_rate / sum_num}; completion_level: {completion_level / sum_num}; expertise: {expertise / sum_num}; reasoning: {reasoning / sum_num}; comprehension: {comprehension / sum_num};")
+    print("****" * 50)
 
     # 根据参数输出jsonl格式，目前只生成repeat0的结果
     if parsed_args.output:

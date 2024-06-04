@@ -11,12 +11,14 @@ from autogen.agentchat.contrib.text_analyzer_agent import TextAnalyzerAgent
 def remove_code_block_markers(input_text):
     # Remove ```json and ``` markers
     # input_text = re.sub(r'```json|```', '', input_text).strip()
+    input_text = input_text.replace("\\", "")
     pattern = r'\{.*\}'
     match = re.search(pattern, input_text, re.DOTALL)
     if match:
         return match.group(0)
     else:
         exit()
+
 
 def delete_empty_lines(text):
     return '\n'.join(line for line in text.splitlines() if line.strip())
@@ -65,7 +67,7 @@ class ReconnaissanceAgent(ConversableAgent):
             system_message: Optional[Union[str, List[str]]] = DEFAULT_PROMPT,
             llm_config: Optional[Union[Dict, Literal[False]]] = None,
             return_mode: Optional[str] = "SOURCE_CODE",
-            max_turns = 3,
+            max_turns=3,
             **kwargs
     ):
         super().__init__(
@@ -117,7 +119,8 @@ class ReconnaissanceAgent(ConversableAgent):
             # 访问初始化url页面
             try:
                 start_url_response = requests.get(start_url)
-                start_url_response = 'Header:\n' + str(start_url_response.headers) + '\n\nContent:\n' + start_url_response.text
+                start_url_response = 'Header:\n' + str(
+                    start_url_response.headers) + '\n\nContent:\n' + start_url_response.text
                 start_url_response = delete_empty_lines(start_url_response)
             except:
                 continue
@@ -127,6 +130,8 @@ class ReconnaissanceAgent(ConversableAgent):
             # 分析页面是否有更多的相关页面 提取对当前任务有帮助的url
             analyse_more_page_prompt = f"""Extract urls that is helpful for the current request in the current page as a list. Note that the url must be complete.
 Remember never to extract the URL of Library Files, such as jquery-3.1.1.min.js, but extract administrator custom files should be extracted, such as main.js
+Do not extract files that are not related to business logic, such as *.css.
+Do not extract media Files such as .jpg .png base64-image .mp4 .mp3
         
 Current request: {messages[-1].get('content')}
             
@@ -182,5 +187,9 @@ Please output an answer in pure JSON format according to the following schema. T
             elif self.return_mode == "SIMPLE_CODE":
                 for url, text in result.items():
                     result[url] = filter_html(text)
+
+            for url, text in result.items():
+                if len(text) > 10000:
+                    result[url] = f"The length of this page is {len(text)}. It is to long, don't visit"
 
             return True, json.dumps(result, ensure_ascii=False)

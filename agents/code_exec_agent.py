@@ -36,8 +36,13 @@ To avoid generating code that takes too long to execute before an uncertain appr
 
 def remove_code_block_markers(input_text):
     # Remove ```json and ``` markers
-    return re.sub(r'```json|```', '', input_text).strip()
-
+    # input_text = re.sub(r'```json|```', '', input_text).strip()
+    pattern = r'\{.*\}'
+    match = re.search(pattern, input_text, re.DOTALL)
+    if match:
+        return match.group(0)
+    else:
+        exit()
 
 class CodeExecAgent(autogen.ConversableAgent):
     DEFAULT_PROMPT = (
@@ -77,7 +82,8 @@ class CodeExecAgent(autogen.ConversableAgent):
             code_execution_config={
                 "work_dir": "web",
                 "use_docker": False,
-                "last_n_messages": 1
+                "last_n_messages": 1,
+                "timeout": 3,
             },
             # llm_config=llm_config,
             default_auto_reply="""reflect on yourself and write code to complete the first request or question, return code block.""",

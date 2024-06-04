@@ -21,22 +21,22 @@
     },
     {
         "model": "Qwen/Qwen1.5-110B-Chat",
-        "api_key": "57b5d1866303c3f9a4930f308f6909a883e60ee477985929033dd6570d5ce9ca",
+        "api_key": "29efa4fb31aaf3e76b6038f114a2e66bd8bcb9eb08b8c8513a7fdebeaada1940",
         "base_url": "https://api.together.xyz/v1"
     },
     {
         "model": "meta-llama/Llama-3-70b-chat-hf",
-        "api_key": "57b5d1866303c3f9a4930f308f6909a883e60ee477985929033dd6570d5ce9ca",
+        "api_key": "29efa4fb31aaf3e76b6038f114a2e66bd8bcb9eb08b8c8513a7fdebeaada1940",
         "base_url": "https://api.together.xyz/v1"
     },
     {
-        "model": "codellama/CodeLlama-70b-Instruct-hf",
-        "api_key": "57b5d1866303c3f9a4930f308f6909a883e60ee477985929033dd6570d5ce9ca",
+        "model": "Phind/Phind-CodeLlama-34B-v2",
+        "api_key": "29efa4fb31aaf3e76b6038f114a2e66bd8bcb9eb08b8c8513a7fdebeaada1940",
         "base_url": "https://api.together.xyz/v1"
     },
     {
         "model": "mistralai/Mixtral-8x22B-Instruct-v0.1",
-        "api_key": "57b5d1866303c3f9a4930f308f6909a883e60ee477985929033dd6570d5ce9ca",
+        "api_key": "29efa4fb31aaf3e76b6038f114a2e66bd8bcb9eb08b8c8513a7fdebeaada1940",
         "base_url": "https://api.together.xyz/v1"
     }
 ]
