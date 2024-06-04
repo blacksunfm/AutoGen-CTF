@@ -107,6 +107,7 @@ To address this request we have assembled the following team:
 Based on the team composition, and known and unknown facts, please devise a short bullet-point plan step by step for addressing the original request.
 You need to give a bullet-point content for each step, the members involved in completing this step, and the division of labor among the members.
 Remember, a team member's particular expertise may not be needed for this task, and some members can cooperate with some of others to complete the work more effectively.
+Remember, review_code_agent has a lot of knowledge about cyber attacks, so make sure you put review_code_agent on the team and have at least one interaction with it every time you plan.
 
 You can make a preliminary plan by following these steps:
     1. select the reconnaissance_agent to visit the website.

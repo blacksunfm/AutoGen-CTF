@@ -107,7 +107,7 @@ with open("chat_score.txt", "rt") as fh:
 
 chat_score_assistant = autogen.AssistantAgent(
     "assistant",
-    system_message="Answer the latest question only according to the message record, strictly follow the requirements of the latest questions. Just reply the answer. Don't add anything else including the reason.",
+    system_message="Answer the latest question only according to the message record, strictly follow the requirements of the latest questions. Just reply the answer. Don't add anything else including the reason.Keep your answers as short and clear as possible. Don't use sentences. Use single words or two or three words.",
     llm_config=testbed_utils.default_llm_config(config_list, timeout=180),
 )
 context_handling = transform_messages.TransformMessages(
