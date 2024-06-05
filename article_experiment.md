@@ -22,6 +22,7 @@ autogenbench tabulate Results/Phind-CodeLlama-34B-v2-BasicTwoAgents__ctfaia__all
 ```
 
 
+
 ```sh
 export OAI_CONFIG_LIST=$(cat ./OAI_CONFIG_LIST)
 cd tests/benchmark_test/CTFAIA
@@ -32,6 +33,7 @@ cd tests/benchmark_test/CTFAIA
 autogenbench tabulate Results/gemini-1.5-pro-BasicTwoAgents__ctfaia__all__20240602 -o
 ```
   
+
 
 ```sh
 export OAI_CONFIG_LIST=$(cat ./OAI_CONFIG_LIST)

@@ -3,6 +3,7 @@ import json
 import os
 import re
 import sys
+import shutil
 from copy import deepcopy
 
 import tabulate as tb
@@ -114,6 +115,28 @@ def scorer(instance_dir):
             return [level, expertise, reasoning, comprehension]
 
 
+def round_and_pad(number, ndigits=2):
+    # 四舍五入到指定的小数位数
+    rounded_number = round(number, ndigits)
+    # 转换为字符串
+    number_str = str(rounded_number)
+    # 分离整数部分和小数部分
+    integer_part, decimal_part = number_str.split('.')
+    # 如果小数部分不足指定的位数，补零
+    while len(decimal_part) < ndigits:
+        decimal_part += '0'
+    # 拼接回去，并转换回数字
+    return float('.'.join([integer_part, decimal_part]))
+
+
+def delete_non_empty_folder(folder_path):
+    try:
+        shutil.rmtree(folder_path)
+        print(f"Folder {folder_path} and its contents have been deleted.")
+    except OSError as e:
+        print(f"Error: {e.strerror}")
+
+
 def custom_tabulate(args, scorer=default_scorer, exclude_dir_names=EXCLUDE_DIR_NAMES):
     invocation_cmd = args[0]
     args = args[1:]
@@ -148,6 +171,7 @@ def custom_tabulate(args, scorer=default_scorer, exclude_dir_names=EXCLUDE_DIR_N
     all_results = list()
     max_instances = 0
 
+    wrong_tasks = []
     for task_id in sorted(
             os.listdir(parsed_args.runlogs),
             key=lambda s: os.path.getmtime(os.path.join(parsed_args.runlogs, s)),
@@ -172,6 +196,7 @@ def custom_tabulate(args, scorer=default_scorer, exclude_dir_names=EXCLUDE_DIR_N
             with open(console_log_file, "rt", encoding='utf-8') as fh:
                 content = fh.read()
                 if not content:
+                    wrong_tasks.append(task_path)
                     print(task_path)
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             instance += 1
@@ -181,8 +206,6 @@ def custom_tabulate(args, scorer=default_scorer, exclude_dir_names=EXCLUDE_DIR_N
 
         # Buffer the results
         all_results.append(results)
-
-
 
     if parsed_args.csv:
         # Create a header
@@ -275,7 +298,13 @@ def custom_tabulate(args, scorer=default_scorer, exclude_dir_names=EXCLUDE_DIR_N
             success_rate += 1
     print("****" * 50)
     print(
-        f"success_rate: {success_rate / sum_num}; completion_level: {completion_level / sum_num}; expertise: {expertise / sum_num}; reasoning: {reasoning / sum_num}; comprehension: {comprehension / sum_num};")
+        f"success_rate: {round(success_rate * 100 / sum_num, 2)}%; "
+        f"completion_level: {round(completion_level / sum_num, 2)}; "
+        f"expertise: {round(expertise * 100 / sum_num, 2)}; "
+        f"reasoning: {round(reasoning * 100 / sum_num, 2)}; "
+        f"comprehension: {round(comprehension * 100 / sum_num, 2)};")
+    print(
+        f" & {round(success_rate * 100 / sum_num, 2)}\% & {round(completion_level / sum_num, 2)} & {round(expertise * 100 / sum_num, 2)} & {round(reasoning * 100 / sum_num, 2)} & {round(comprehension * 100 / sum_num, 2)}\\\\")
     print("****" * 50)
 
     # 根据参数输出jsonl格式，目前只生成repeat0的结果
@@ -328,6 +357,11 @@ def custom_tabulate(args, scorer=default_scorer, exclude_dir_names=EXCLUDE_DIR_N
             for item in results_jsonl:
                 file.write(json.dumps(item) + '\n')
         print(os.path.join(parsed_args.runlogs, 'result.jsonl'))
+
+    for task in wrong_tasks:
+        print(task)
+        # 需要重跑失败任务吗
+        # delete_non_empty_folder(task)
 
 
 def main(args):

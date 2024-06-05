@@ -114,12 +114,11 @@ chat_score_assistant = autogen.AssistantAgent(
     system_message="Answer the latest question only according to the message record, strictly follow the requirements of the latest questions. Just reply the answer. Don't add anything else including the reason.",
     llm_config=testbed_utils.default_llm_config(config_list, timeout=180),
 )
-context_handling = transform_messages.TransformMessages(
-    transforms=[
-        transforms.MessageTokenLimiter(min_tokens=10),
-    ]
-)
-context_handling.add_to_agent(chat_score_assistant)
+
+print(len(chat_messages))
+token_limit_transform = transforms.MessageTokenLimiter(max_tokens=8193, model="gpt-4-0314", max_tokens_per_message=800)
+chat_messages = token_limit_transform.apply_transform(chat_messages)
+print(len(chat_messages))
 
 for i, score_item in enumerate(chat_score):
     score_item["answer"] = ""
