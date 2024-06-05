@@ -47,7 +47,7 @@ def scorer(instance_dir):
         return None
 
     console_log = ""
-    print(console_log_file)
+    # print(console_log_file)
     with open(console_log_file, "rt", encoding='utf-8') as fh:
         console_log = fh.read()
 
@@ -63,7 +63,7 @@ def scorer(instance_dir):
         comprehension = 0
         # 记录得分情况
         chat_score_log_file = os.path.join(instance_dir, "chat_score_log.txt")
-        with open(chat_score_log_file, 'a', encoding='utf-8') as score_log:
+        with open(chat_score_log_file, 'w', encoding='utf-8') as score_log:
             # 读取chat_score
             chat_score_file = os.path.join(instance_dir, "chat_score.txt")
             if not os.path.isfile(chat_score_file):
@@ -71,7 +71,7 @@ def scorer(instance_dir):
             chat_score = None
             with open(chat_score_file, "rt") as fh:
                 content = fh.read().strip()
-                print(content)
+                # print(content)
                 try:
                     chat_score = eval(content)
                 except:
@@ -92,7 +92,7 @@ def scorer(instance_dir):
                             if keyword_match(answer, ground_truth):
                                 answer_true = True
                                 break
-                    print(answer, score_item['answer'], answer_true)
+                    # print(answer, score_item['answer'], answer_true)
                     score_log.write(format_write_mode_a([answer, score_item['answer'], answer_true]))
                     # 加分
                     if answer_true:
@@ -101,7 +101,7 @@ def scorer(instance_dir):
                         comprehension += score_item['comprehension']
                         if score_item['score'] > level:
                             level = score_item['score']
-                        print([level, expertise, reasoning, comprehension])
+                        # print([level, expertise, reasoning, comprehension])
                         score_log.write(format_write_mode_a([level, expertise, reasoning, comprehension]))
                     score_log.write('\n')
             # final_answer正确 则满分，但是能力分不加了
@@ -167,6 +167,13 @@ def custom_tabulate(args, scorer=default_scorer, exclude_dir_names=EXCLUDE_DIR_N
         instance_dir = os.path.join(task_path, str(instance))
         while os.path.isdir(instance_dir):
             results.append(scorer(instance_dir))
+            # 如果没有评分日志，那么儿就是没检测到任何问题答案，证明是中间出了问题，打印出来重新执行
+            console_log_file = os.path.join(instance_dir, "chat_score_log.txt")
+            with open(console_log_file, "rt", encoding='utf-8') as fh:
+                content = fh.read()
+                if not content:
+                    print(task_path)
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             instance += 1
             instance_dir = os.path.join(task_path, str(instance))
 
@@ -174,6 +181,8 @@ def custom_tabulate(args, scorer=default_scorer, exclude_dir_names=EXCLUDE_DIR_N
 
         # Buffer the results
         all_results.append(results)
+
+
 
     if parsed_args.csv:
         # Create a header
@@ -248,7 +257,7 @@ def custom_tabulate(args, scorer=default_scorer, exclude_dir_names=EXCLUDE_DIR_N
         sys.stderr.write("\n" + warning + "\n\n")
 
     # 打印评价指标
-    print(all_results)
+    # print(all_results)
     print('done task: ' + str(len(all_results)))
     success_rate = 0
     completion_level = 0
@@ -293,7 +302,7 @@ def custom_tabulate(args, scorer=default_scorer, exclude_dir_names=EXCLUDE_DIR_N
                 continue
 
             console_log = ""
-            print(console_log_file)
+            # print(console_log_file)
             with open(console_log_file, "rt", encoding='utf-8') as fh:
                 console_log = fh.read()
 
