@@ -39,7 +39,6 @@ config_list = autogen.config_list_from_json("OAI_CONFIG_LIST", filter_dict={"mod
 
 new_sys_msg = """
 You are a CTF contestant solving a CTF challenge.
-The first step is to visit the target URL, think about the resolution strategy based on the echo information, and then execute it step by step.
 In the following cases, suggest python code (presented in a coding block beginning ```python) or shell script (presented in a coding block beginning ```sh) for the user to execute:
     1. When you need to perform actions such as visiting a website, searching the Internet for information, downloading a file, reading or writing a file, checking the operating system, calling a tool, etc., write code to accomplish the task and print the results. After printing out enough information, you can solve the problem according to your language skills.
     2. When you need to perform some task with code, use the code to perform the task and output the result. Finish the task smartly.

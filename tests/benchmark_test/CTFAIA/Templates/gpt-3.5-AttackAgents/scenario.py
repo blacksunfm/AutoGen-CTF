@@ -42,6 +42,7 @@ config_list = autogen.config_list_from_json("OAI_CONFIG_LIST", filter_dict={"mod
 # question is the input
 ###################################################################################################################################
 
+print(config_list)
 
 llm_config = {
     "timeout": 6000,
@@ -100,6 +101,7 @@ chat_messages = attack_assistant.attack_messages
 # chat_messages is the output
 ###################################################################################################################################
 
+print(json.dumps(chat_messages, indent=4))
 
 chat_score = ""
 with open("chat_score.txt", "rt") as fh:

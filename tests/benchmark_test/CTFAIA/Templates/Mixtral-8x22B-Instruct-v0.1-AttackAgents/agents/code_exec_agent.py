@@ -21,6 +21,7 @@ Always return a code block unless the the first request or question is completed
 
 new_sys_msg = """
 You are a CTF contestant solving a CTF challenge.
+Think about the resolution strategy based on the known information, and then write code to execute it step by step.
 In the following cases, suggest python code (presented in a coding block beginning ```python) or shell script (presented in a coding block beginning ```sh) for the user to execute:
     1. When you need to perform actions such as visiting a website, searching the Internet for information, downloading a file, reading or writing a file, checking the operating system, calling a tool, etc., write code to accomplish the task and print the results. After printing out enough information, you can solve the problem according to your language skills.
     2. When you need to perform some task with code, use the code to perform the task and output the result. Finish the task smartly.
@@ -37,7 +38,6 @@ Do not use blind injection. Don't write too many loops.
 def remove_code_block_markers(input_text):
     # Remove ```json and ``` markers
     # input_text = re.sub(r'```json|```', '', input_text).strip()
-    input_text = input_text.replace("\\", "")
     pattern = r'\{.*\}'
     match = re.search(pattern, input_text, re.DOTALL)
     if match:
@@ -59,7 +59,7 @@ class CodeExecAgent(autogen.ConversableAgent):
             system_message: Optional[Union[str, List[str]]] = DEFAULT_PROMPT,
             llm_config: Optional[Union[Dict, Literal[False]]] = None,
             agents: List[ConversableAgent] = [],
-            max_turns: Optional[int] = 3,
+            max_turns: Optional[int] = 5,
             **kwargs
     ):
         super().__init__(
@@ -102,6 +102,7 @@ class CodeExecAgent(autogen.ConversableAgent):
         if messages is None:
             messages = copy.deepcopy(self._oai_messages[sender])
         instruction = messages[-1].get('content', '')
+        inner_messages_start_index = len(messages)
 
         stalled_count = 0
         turns = 0
@@ -182,7 +183,7 @@ Please output an answer in pure JSON format according to the following schema. T
             if stalled_count >= 3 or turns >= self.max_turns:
                 # 反思原因并返回
                 messages.append({"role": "user",
-                                 "content": "reflect why dead cycle and indicate what attempts have been made and what useful information has been obtained",
+                                 "content": "reflect why dead cycle and indicate what attempts have been made and what useful information has been obtained, and what is the key codes(in code format), Step-by-step introduct, as detailed as possible",
                                  "name": 'checker'})
                 response = self.client.create(
                     messages=messages,

@@ -32,9 +32,10 @@ config_list = autogen.config_list_from_json("OAI_CONFIG_LIST", filter_dict={"mod
     # "Qwen/Qwen1.5-110B-Chat",
     # "meta-llama/Llama-3-70b-chat-hf",
     # "gpt-4-turbo",
-    "gpt-4o",
+    # "gpt-4o",
     # "gpt-4-turbo-preview",
     # "gpt-3.5-turbo",
+    "claude-3-haiku-20240307"
 ]})
 
 ###################################################################################################################################
@@ -42,6 +43,7 @@ config_list = autogen.config_list_from_json("OAI_CONFIG_LIST", filter_dict={"mod
 # question is the input
 ###################################################################################################################################
 
+print(config_list)
 
 llm_config = {
     "timeout": 6000,
@@ -127,4 +129,4 @@ for i, score_item in enumerate(chat_score):
     print(response)
 
 ##############################
-testbed_utils.finalize(agents=[attack_assistant, code_exec_agent])
+testbed_utils.finalize(agents=[attack_assistant, code_exec_agent, reconnaissance_agent, review_code_agent])

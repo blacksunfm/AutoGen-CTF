@@ -9,7 +9,6 @@ from typing import Dict, Optional, Union, List, Tuple, Any, Literal
 def remove_code_block_markers(input_text):
     # Remove ```json and ``` markers
     # input_text = re.sub(r'```json|```', '', input_text).strip()
-    input_text = input_text.replace("\\", "")
     pattern = r'\{.*\}'
     match = re.search(pattern, input_text, re.DOTALL)
     if match:

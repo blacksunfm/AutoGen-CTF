@@ -106,6 +106,7 @@ class ReviewCodeAgent(ConversableAgent):
                     }}
                 """
                 _messages.append({"role": "user", "content": extract_target_prompt, "name": sender.name})
+                print(json.dumps(_messages, indent=4))
                 response = self.client.create(
                     messages=_messages,
                     cache=self.client_cache,

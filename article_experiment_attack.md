@@ -44,6 +44,14 @@ autogenbench run Tasks/gpt-3.5-AttackAgents__ctfaia__all__20240602.jsonl
 cd tests/benchmark_test/CTFAIA
 autogenbench tabulate Results/gpt-3.5-AttackAgents__ctfaia__all__20240602 -o
 ```
+```sh
+cd tests/benchmark_test/CTFAIA
+autogenbench tabulate Results/gpt-3.5-AttackAgents__ctfaia__all__20240602__bak -o
+```
+```sh
+cd tests/benchmark_test/CTFAIA
+autogenbench tabulate Results/gpt-3.5-AttackAgents__ctfaia__all__20240602_5_3 -o
+```
 
 
 ```sh

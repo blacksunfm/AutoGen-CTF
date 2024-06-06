@@ -104,7 +104,7 @@ class ReconnaissanceAgent(ConversableAgent):
             if error_times > self.max_turns:
                 return False, None
             # 提取初始化的url
-            extract_url_prompt = """Only extract the target URL and return it. DO NOT OUTPUT ANYTHING OTHER THAN THE URL. Don't explain and illustrate."""
+            extract_url_prompt = """Only extract the target URL and return it. DO NOT OUTPUT ANYTHING OTHER THAN THE URL. Don't explain and illustrate. Only URL!"""
             _messages.append({"role": "user", "content": extract_url_prompt, "name": sender.name})
             response = self.client.create(
                 messages=_messages,
@@ -127,10 +127,9 @@ class ReconnaissanceAgent(ConversableAgent):
             print(start_url_response)
 
             # 分析页面是否有更多的相关页面 提取对当前任务有帮助的url
-            analyse_more_page_prompt = f"""Extract urls that is helpful for the current request in the current page as a list. Note that the url must be complete.
-Remember never to extract the URL of Library Files, such as jquery-3.1.1.min.js, but extract administrator custom files should be extracted, such as main.js
-Do not extract files that are not related to business logic, such as *.css.
-Do not extract media Files such as .jpg .png base64-image .mp4 .mp3
+            analyse_more_page_prompt = f"""Extract urls that is helpful for the current request in the current page as a list. Note that the url must be complete, like http://.../.
+Extract some important url like http://.../main.js http://.../admin.php
+Ignore unimportant url such as .css .jpg .png base64-image .mp4 .mp3
         
 Current request: {messages[-1].get('content')}
             
@@ -173,8 +172,8 @@ Please output an answer in pure JSON format according to the following schema. T
                     relate_pages[url] = tmp_response
             except:
                 continue
-            print('*' * 10 + '同站相关页面' + '*' * 10)
-            print(relate_pages)
+            # print('*' * 10 + '同站相关页面' + '*' * 10)
+            # print(relate_pages)
 
             result = relate_pages
             result[start_url] = start_url_response

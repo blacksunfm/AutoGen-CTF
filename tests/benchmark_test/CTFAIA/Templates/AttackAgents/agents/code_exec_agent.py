@@ -101,6 +101,7 @@ class CodeExecAgent(autogen.ConversableAgent):
         if messages is None:
             messages = copy.deepcopy(self._oai_messages[sender])
         instruction = messages[-1].get('content', '')
+        inner_messages_start_index = len(messages)
 
         stalled_count = 0
         turns = 0
@@ -181,7 +182,7 @@ Please output an answer in pure JSON format according to the following schema. T
             if stalled_count >= 3 or turns >= self.max_turns:
                 # 反思原因并返回
                 messages.append({"role": "user",
-                                 "content": "reflect why dead cycle and indicate what attempts have been made and what useful information has been obtained",
+                                 "content": "reflect why dead cycle and indicate what attempts have been made and what useful information has been obtained, and what is the key codes(in code format), Step-by-step introduct, as detailed as possible",
                                  "name": 'checker'})
                 response = self.client.create(
                     messages=messages,
