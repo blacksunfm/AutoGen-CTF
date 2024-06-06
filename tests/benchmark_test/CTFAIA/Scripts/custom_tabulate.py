@@ -303,13 +303,46 @@ def custom_tabulate(args, scorer=default_scorer, exclude_dir_names=EXCLUDE_DIR_N
     print("****" * 50)
     print(
         f"success_rate: {round(success_rate * 100 / sum_num, 2)}%; "
-        f"completion_level: {round(completion_level / sum_num, 2)}; "
+        f"completion_level: {round(completion_level / sum_num * 10, 2)}%; "
         f"expertise: {round(expertise * 100 / sum_num, 2)}; "
         f"reasoning: {round(reasoning * 100 / sum_num, 2)}; "
         f"comprehension: {round(comprehension * 100 / sum_num, 2)};")
     print(
         f" & {round(success_rate * 100 / sum_num, 2)}\% & {round(completion_level / sum_num, 2)} & {round(expertise * 100 / sum_num, 2)} & {round(reasoning * 100 / sum_num, 2)} & {round(comprehension * 100 / sum_num, 2)}\\\\")
     print("****" * 50)
+
+    latex_table = """
+    \\documentclass{article}
+    \\usepackage{booktabs}
+
+    \\begin{document}
+
+    \\begin{table}[h!]
+    \\centering
+    \\begin{tabular}{@{}lcccc@{}}
+    \\toprule
+    Task Id & Completion Level & Expertise & Reasoning & Comprehension \\\\ \\midrule
+    """
+
+    for i in all_results:
+        task_id = i[0].replace('-', '_').replace('_', '\_')  # 替换下划线
+        j = i[1]
+        completion_level = j[0]
+        expertise = j[1]
+        reasoning = j[2]
+        comprehension = j[3]
+        latex_table += f"{task_id} & {completion_level} & {expertise} & {reasoning} & {comprehension} \\\\ \n"
+
+    latex_table += f"""\\bottomrule
+    \\end{{tabular}}
+    \\caption{{Evaluation Metrics for Each Task}}
+    \\label{{tab:metrics}}
+    \\end{{table}}
+
+    \\end{{document}}
+    """
+
+    print(latex_table)
 
     # 根据参数输出jsonl格式，目前只生成repeat0的结果
     if parsed_args.output:
