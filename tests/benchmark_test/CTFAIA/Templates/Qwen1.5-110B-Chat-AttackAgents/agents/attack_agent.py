@@ -33,7 +33,7 @@ class AttackAgent(ConversableAgent):
             system_message: Optional[Union[str, List[str]]] = DEFAULT_PROMPT,
             llm_config: Optional[Union[Dict, Literal[False]]] = None,
             agents: List[ConversableAgent] = [],
-            max_turns: Optional[int] = 5,
+            max_turns: Optional[int] = 3,
             **kwargs
     ):
         super().__init__(

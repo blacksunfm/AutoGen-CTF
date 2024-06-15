@@ -30,12 +30,12 @@ if len(filename) > 0:
 
 config_list = autogen.config_list_from_json("OAI_CONFIG_LIST", filter_dict={"model": [
     # "Qwen/Qwen1.5-110B-Chat",
+    "mistralai/Mixtral-8x22B-Instruct-v0.1",
     # "meta-llama/Llama-3-70b-chat-hf",
     # "gpt-4-turbo",
     # "gpt-4o",
     # "gpt-4-turbo-preview",
     # "gpt-3.5-turbo",
-    "mistralai/Mixtral-8x22B-Instruct-v0.1"
 ]})
 
 ###################################################################################################################################

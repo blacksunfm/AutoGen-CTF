@@ -33,7 +33,7 @@ class AttackAgent(ConversableAgent):
             system_message: Optional[Union[str, List[str]]] = DEFAULT_PROMPT,
             llm_config: Optional[Union[Dict, Literal[False]]] = None,
             agents: List[ConversableAgent] = [],
-            max_turns: Optional[int] = 5,
+            max_turns: Optional[int] = 3,
             **kwargs
     ):
         super().__init__(
@@ -335,7 +335,7 @@ Note that you only answer 'Yes' or 'No' by checking whether the requst is satisf
                 self._print_thought(str(e))
                 self._print_thought(extracted_response)
                 _messages.pop()
-                continue
+                exit()
             _messages.append({"role": "assistant", "content": extracted_response, "name": self.name})
             break
         self._print_thought('*' * 10 + '制定的计划' + '*' * 10)

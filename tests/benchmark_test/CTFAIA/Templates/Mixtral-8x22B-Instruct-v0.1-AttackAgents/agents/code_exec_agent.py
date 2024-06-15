@@ -59,7 +59,7 @@ class CodeExecAgent(autogen.ConversableAgent):
             system_message: Optional[Union[str, List[str]]] = DEFAULT_PROMPT,
             llm_config: Optional[Union[Dict, Literal[False]]] = None,
             agents: List[ConversableAgent] = [],
-            max_turns: Optional[int] = 5,
+            max_turns: Optional[int] = 3,
             **kwargs
     ):
         super().__init__(
@@ -164,7 +164,7 @@ Please output an answer in pure JSON format according to the following schema. T
             if data["is_request_satisfied"]["answer"]:
                 # 反思过程并返回
                 messages.append({"role": "user",
-                                 "content": "reflect history to find how to satisfy the request, what is the conclusion, and what is the key codes(in code format)",
+                                 "content": "reflect why dead cycle and indicate what attempts have been made and what useful information has been obtained, and what is the key codes(in code format, output code that contains useful information intact.), Step-by-step introduct, as detailed as possible. ",
                                  "name": 'checker'})
                 response = self.client.create(
                     messages=messages,

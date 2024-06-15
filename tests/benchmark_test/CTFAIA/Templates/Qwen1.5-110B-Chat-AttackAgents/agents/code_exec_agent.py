@@ -164,7 +164,7 @@ Please output an answer in pure JSON format according to the following schema. T
             if data["is_request_satisfied"]["answer"]:
                 # 反思过程并返回
                 messages.append({"role": "user",
-                                 "content": "reflect history to find how to satisfy the request, what is the conclusion, and what is the key codes(in code format)",
+                                 "content": "reflect why dead cycle and indicate what attempts have been made and what useful information has been obtained, and what is the key codes(in code format, output code that contains useful information intact.), Step-by-step introduct, as detailed as possible. ",
                                  "name": 'checker'})
                 response = self.client.create(
                     messages=messages,

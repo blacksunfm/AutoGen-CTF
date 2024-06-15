@@ -16,14 +16,15 @@ from scorer import question_scorer
 from content import format_error, format_warning, format_log, TITLE, INTRODUCTION_TEXT, CITATION_BUTTON_LABEL, \
     CITATION_BUTTON_TEXT, model_hyperlink
 
-TOKEN = os.environ.get("TOKEN", None)
+TOKEN = os.environ.get("HUGGINGFACE_API_KEY", None)
+print(TOKEN)
 
 OWNER = "autogenCTF"
 DATA_DATASET = f"{OWNER}/CTFAIA"
 INTERNAL_DATA_DATASET = f"{OWNER}/CTFAIA_internal"
 SUBMISSION_DATASET = f"{OWNER}/CTFAIA_submissions_internal"
 CONTACT_DATASET = f"{OWNER}/contact_info"
-RESULTS_DATASET = f"{OWNER}/CTFAIA_results_public"
+RESULTS_DATASET = f"{OWNER}/test_result"
 LEADERBOARD_PATH = f"{OWNER}/agent_ctf_leaderboard"
 api = HfApi()
 
@@ -31,13 +32,13 @@ YEAR_VERSION = "2024"
 
 os.makedirs("scored", exist_ok=True)
 
-all_version = ['20240423']
+all_version = ['20240602']
 
 contact_infos = load_dataset(
     CONTACT_DATASET,
     token=TOKEN,
-    download_mode="force_redownload",
-    ignore_verifications=True
+    # download_mode="force_redownload",
+    verification_mode="no_checks"
 )
 
 all_gold_dataset = {}
@@ -48,8 +49,8 @@ for dataset_version in all_version:
         INTERNAL_DATA_DATASET,
         dataset_version,
         token=TOKEN,
-        download_mode="force_redownload",
-        ignore_verifications=True,
+        # download_mode="force_redownload",
+        verification_mode="no_checks",
         trust_remote_code=True
     )
     all_gold_results[dataset_version] = {
@@ -61,7 +62,7 @@ for dataset_version in all_version:
         dataset_version,
         token=TOKEN,
         download_mode="force_redownload",
-        ignore_verifications=True,
+        verification_mode="no_checks",
         trust_remote_code=True
     )
 
@@ -69,23 +70,30 @@ for dataset_version in all_version:
 def get_dataframe_from_results(eval_results, split):
     local_df = eval_results[split]
     local_df = local_df.map(lambda row: {"model": model_hyperlink(row["url"], row["model"])})
-    local_df = local_df.remove_columns(["system_prompt", "url"])
+    local_df = local_df.remove_columns(["url"])
     local_df = local_df.rename_column("model", "Model name")
     local_df = local_df.rename_column("model_family", "Model family")
-    local_df = local_df.rename_column("score", "Average score (%)")
-    for i in [1, 2, 3]:
-        local_df = local_df.rename_column(f"score_level{i}", f"Level {i} score (%)")
     df = pd.DataFrame(local_df)
-    df = df.sort_values(by=["Average score (%)"], ascending=False)
+    df = df.sort_values(by=["completion_level"], ascending=False)
 
-    numeric_cols = [c for c in local_df.column_names if "score" in c]
-    df[numeric_cols] = df[numeric_cols].multiply(100).round(decimals=2)
-    # df = df.style.format("{:.2%}", subset=numeric_cols)
+    df = df[["Model name", "Model family", "organisation", "completion_level", "success_rate", "expertise", "reasoning",
+             "comprehension"]]
+
+    numeric_cols = [c for c in local_df.column_names if c in ["expertise", "reasoning", "comprehension"]]
+    percent_cols = [c for c in local_df.column_names if c in ["success_rate", "completion_level"]]
+
+    df_style_format = {}
+    for label in numeric_cols:
+        df_style_format[label] = "{:.2f}"
+    for label in percent_cols:
+        df_style_format[label] = "{:.2%}"
+    df = df.style.format(df_style_format)
 
     return df
 
 
 eval_dataframe = {}
+
 for dataset_version in all_version:
     eval_dataframe[dataset_version] = get_dataframe_from_results(
         eval_results=eval_results[dataset_version],
@@ -97,14 +105,14 @@ def restart_space():
     api.restart_space(repo_id=LEADERBOARD_PATH, token=TOKEN)
 
 
-TYPES = ["markdown", "number", "number", "number", "number", "str", "str"]
+TYPES = ["markdown", "str", "str", "str", "number", "number", "number", "number"]
+LEVELS = ["all", 1, 2, 3]
 
 
 def add_new_eval(
         dataset_version: str,
         model: str,
         model_family: str,
-        system_prompt: str,
         url: str,
         path_to_file: str,
         organisation: str,
@@ -127,23 +135,19 @@ def add_new_eval(
     if path_to_file is None:
         return format_warning("Please attach a file.")
 
-    # Save submitted file
-    api.upload_file(
-        repo_id=SUBMISSION_DATASET,
-        path_or_fileobj=path_to_file.name,
-        path_in_repo=f"{organisation}/{model}/{dataset_version}_{val_or_test}_raw_{datetime.datetime.today()}.jsonl",
-        repo_type="dataset",
-        token=TOKEN
-    )
-
     # Gold answers
     gold_results = all_gold_results[dataset_version]
+    print(gold_results)
 
     # Compute score
     file_path = path_to_file.name
-    scores = {"all": 0, 1: 0, 2: 0, 3: 0}
-    num_questions = {"all": 0, 1: 0, 2: 0, 3: 0}
-    total_scores = {"all": 0, 1: 0, 2: 0, 3: 0}
+    success_rate = {'all': 0, 1: 0, 2: 0, 3: 0}
+    completion_level = {'all': 0, 1: 0, 2: 0, 3: 0}
+    expertise = {'all': 0, 1: 0, 2: 0, 3: 0}
+    reasoning = {'all': 0, 1: 0, 2: 0, 3: 0}
+    comprehension = {'all': 0, 1: 0, 2: 0, 3: 0}
+    num = {'all': 0, 1: 0, 2: 0, 3: 0}
+
     with open(f"scored/{organisation}_{model}.jsonl", "w") as scored_file:
         with open(file_path, 'r') as f:
             for ix, line in enumerate(f):
@@ -156,13 +160,17 @@ def add_new_eval(
                     raise format_error(f"Line {ix} contains no final_answer key. Please fix it and resubmit your file.")
                 answer = task["final_answer"]
                 task_name = task["task_name"]
-                try:
+                if task_name in gold_results[val_or_test]:
                     level = int(gold_results[val_or_test][task_name]["Level"])
-                except KeyError:
-                    return format_error(
-                        f"{task_name} not found in split {val_or_test}. Are you sure you submitted the correct file?")
-
-                score = question_scorer(task, gold_results[val_or_test][task_name])
+                    score = question_scorer(task, gold_results[val_or_test][task_name])
+                else:
+                    continue
+                # try:
+                #     level = int(gold_results[val_or_test][task_name]["Level"])
+                #     score = question_scorer(task, gold_results[val_or_test][task_name])
+                # except KeyError:
+                #     return format_error(
+                #         f"{task_name} not found in split {val_or_test}. Are you sure you submitted the correct file?")
 
                 scored_file.write(
                     json.dumps({
@@ -173,14 +181,39 @@ def add_new_eval(
                     }) + "\n"
                 )
 
-                scores["all"] += score
-                scores[level] += score
-                num_questions["all"] += 1
-                num_questions[level] += 1
-    for task_name, task in gold_results[val_or_test].items():
-        level = int(task['Level'])
-        total_scores["all"] += 10
-        total_scores[level] += 10
+                num[level] += 1
+                completion_level[level] += score[0]
+                expertise[level] += score[1]
+                reasoning[level] += score[2]
+                comprehension[level] += score[3]
+
+                num['all'] += 1
+                completion_level['all'] += score[0]
+                expertise['all'] += score[1]
+                reasoning['all'] += score[2]
+                comprehension['all'] += score[3]
+
+                if score[0] == 10:
+                    success_rate[level] += 1
+                    success_rate['all'] += 1
+
+        for key in LEVELS:
+            success_rate[key] = success_rate[key] / num[key]
+            completion_level[key] = completion_level[key] / num[key] / 10
+            expertise[key] = expertise[key] / num[key]
+            reasoning[key] = reasoning[key] / num[key]
+            comprehension[key] = comprehension[key] / num[key]
+
+        print(success_rate, completion_level, expertise, reasoning, comprehension)
+
+    # Save submitted file
+    api.upload_file(
+        repo_id=SUBMISSION_DATASET,
+        path_or_fileobj=path_to_file.name,
+        path_in_repo=f"{organisation}/{model}/{dataset_version}_{val_or_test}_raw_{datetime.datetime.today()}.jsonl",
+        repo_type="dataset",
+        token=TOKEN
+    )
 
     # Save scored file
     api.upload_file(
@@ -195,14 +228,15 @@ def add_new_eval(
     eval_entry = {
         "model": model,
         "model_family": model_family,
-        "system_prompt": system_prompt,
         "url": url,
         "organisation": organisation,
-        "score": scores["all"] / total_scores["all"],
-        "score_level1": scores[1] / total_scores[1] if total_scores[1] else 0,
-        "score_level2": scores[2] / total_scores[2] if total_scores[2] else 0,
-        "score_level3": scores[3] / total_scores[3] if total_scores[3] else 0,
+        "success_rate": success_rate["all"],
+        "completion_level": completion_level["all"],
+        "expertise": expertise["all"],
+        "reasoning": reasoning["all"],
+        "comprehension": comprehension["all"]
     }
+
     eval_results[dataset_version][val_or_test] = eval_results[dataset_version][val_or_test].add_item(eval_entry)
     eval_results[dataset_version].push_to_hub(RESULTS_DATASET, config_name=dataset_version, token=TOKEN)
 
@@ -228,22 +262,22 @@ def refresh():
             dataset_version,
             token=TOKEN,
             download_mode="force_redownload",
-            ignore_verifications=True
+            verification_mode="no_checks",
+            trust_remote_code=True
         )
-    leaderboard_tables = []
+
+    new_eval_dataframe = {}
+    new_leaderboard_tables = []
     for dataset_version in all_version:
-        eval_dataframe[dataset_version] = get_dataframe_from_results(
+        new_eval_dataframe[dataset_version] = get_dataframe_from_results(
             eval_results=eval_results[dataset_version],
             split="validation"
         )
-        with gr.Tab(dataset_version):
-            leaderboard_tables.append(
-                gr.components.Dataframe(
-                    value=eval_dataframe[dataset_version], datatype=TYPES, interactive=False,
-                    column_widths=["20%"]
-                )
-            )
-    return leaderboard_tables
+        new_leaderboard_tables.append(new_eval_dataframe[dataset_version])
+    if len(new_leaderboard_tables) == 1:
+        return new_leaderboard_tables[0]
+    else:
+        return new_leaderboard_tables
 
 
 def upload_file(files):
@@ -286,7 +320,6 @@ with demo:
                 level_of_test = gr.Radio(all_version, value=all_version[0], label="dataset_version")
                 model_name_textbox = gr.Textbox(label="Model name", value='')
                 model_family_textbox = gr.Textbox(label="Model family", value='')
-                system_prompt_textbox = gr.Textbox(label="System prompt example", value='')
                 url_textbox = gr.Textbox(label="Url to model information", value='')
             with gr.Column():
                 organisation = gr.Textbox(label="Organisation", value='')
@@ -303,7 +336,6 @@ with demo:
                 level_of_test,
                 model_name_textbox,
                 model_family_textbox,
-                system_prompt_textbox,
                 url_textbox,
                 file_output,
                 organisation,
@@ -315,4 +347,4 @@ with demo:
 scheduler = BackgroundScheduler()
 scheduler.add_job(restart_space, "interval", seconds=3600)
 scheduler.start()
-demo.launch(debug=True)
+demo.launch()

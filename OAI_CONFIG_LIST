@@ -25,23 +25,28 @@
         "base_url": "https://api.kwwai.top/v1"
     },
     {
+        "model": "deepseek-chat",
+        "api_key": "sk-b4NgqRHyA1zeGuEZA8851a9d187346418d2d75C532C97f73",
+        "base_url": "https://api.kwwai.top/v1"
+    },
+    {
         "model": "Qwen/Qwen1.5-110B-Chat",
-        "api_key": "87ff591ab9567d7f5722effe2cf5c1a8be55f13c155ba44c154a7f7a51d9f311",
+        "api_key": "fb629d45e01b9be4207b95326aa283e1df21f4a49c0f1ea318f854149eff703d",
         "base_url": "https://api.together.xyz/v1"
     },
     {
         "model": "meta-llama/Llama-3-70b-chat-hf",
-        "api_key": "87ff591ab9567d7f5722effe2cf5c1a8be55f13c155ba44c154a7f7a51d9f311",
+        "api_key": "fb629d45e01b9be4207b95326aa283e1df21f4a49c0f1ea318f854149eff703d",
         "base_url": "https://api.together.xyz/v1"
     },
     {
         "model": "Phind/Phind-CodeLlama-34B-v2",
-        "api_key": "87ff591ab9567d7f5722effe2cf5c1a8be55f13c155ba44c154a7f7a51d9f311",
+        "api_key": "fb629d45e01b9be4207b95326aa283e1df21f4a49c0f1ea318f854149eff703d",
         "base_url": "https://api.together.xyz/v1"
     },
     {
         "model": "mistralai/Mixtral-8x22B-Instruct-v0.1",
-        "api_key": "87ff591ab9567d7f5722effe2cf5c1a8be55f13c155ba44c154a7f7a51d9f311",
+        "api_key": "fb629d45e01b9be4207b95326aa283e1df21f4a49c0f1ea318f854149eff703d",
         "base_url": "https://api.together.xyz/v1"
     }
 ]

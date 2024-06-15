@@ -112,7 +112,7 @@ chat_score_assistant = autogen.AssistantAgent(
 )
 
 print(len(chat_messages))
-token_limit_transform = transforms.MessageTokenLimiter(max_tokens=8193, model="gpt-4-0314", max_tokens_per_message=800)
+token_limit_transform = transforms.MessageTokenLimiter(max_tokens=8193, model="gpt-4-0314", max_tokens_per_message=800, min_tokens=7500)
 chat_messages = token_limit_transform.apply_transform(chat_messages)
 print(len(chat_messages))
 

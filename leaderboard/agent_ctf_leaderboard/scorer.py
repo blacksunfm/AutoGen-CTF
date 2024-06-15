@@ -18,6 +18,25 @@ def normalize_number_str(number_str: str) -> float:
         return float("inf")
 
 
+def normalize_answer(a):
+    # Lower case
+    # Trim (left and right)
+    # Replace multiple spaces with one space
+    # Remove trailing punctuation
+    # return re.sub(r"[\.\!\?]+$", "", re.sub(r"\s+", " ", a.strip().lower()))
+    if isinstance(a, list):
+        a = ''.join(a)
+    return a.strip().lower()
+
+
+def exact_match(answer, ground_truth):
+    return normalize_answer(answer) == normalize_answer(ground_truth)
+
+
+def keyword_match(answer, ground_truth):
+    return normalize_answer(ground_truth) in normalize_answer(answer)
+
+
 def split_string(
         s: str,
         char_list: list[str] = [",", ";"],
@@ -36,6 +55,57 @@ def question_scorer(
             return True
         except ValueError:
             return False
+
+    # 打分机制
+    level = 0
+    expertise = 0
+    reasoning = 0
+    comprehension = 0
+
+    final_answer = user_task["final_answer"]
+    expected_answer = val["Final answer"]
+
+    data = val["score"]
+    chat_score = []
+    for i in range(len(data['type'])):
+        item = {
+            'type': data['type'][i],
+            'question': data['question'][i],
+            'choices': data['choices'][i],
+            'answer': data['answer'][i],
+            'expertise': data['expertise'][i],
+            'reasoning': data['reasoning'][i],
+            'comprehension': data['comprehension'][i],
+            'score': data['score'][i]
+        }
+        chat_score.append(item)
+
+    for i, score_item in enumerate(chat_score):
+        answer_true = False
+        if score_item['type'].lower() == 'multiple choice':
+            if exact_match(user_task["score_answer"][i], score_item['answer']):
+                answer_true = True
+        elif score_item['type'].lower() == 'fill in the blanks':
+            if keyword_match(user_task["score_answer"][i], score_item['answer']):
+                answer_true = True
+        elif score_item['type'].lower() == 'short answer questions':
+            for ground_truth in score_item['answer']:
+                if keyword_match(user_task["score_answer"][i], ground_truth):
+                    answer_true = True
+                    break
+        # print(answer, score_item['answer'], answer_true)
+        # 加分
+        if answer_true:
+            expertise += score_item['expertise']
+            reasoning += score_item['reasoning']
+            comprehension += score_item['comprehension']
+            if score_item['score'] > level:
+                level = score_item['score']
+            print([level, expertise, reasoning, comprehension])
+    # final_answer正确 则满分，但是能力分不加了
+    if expected_answer and exact_match(final_answer, expected_answer):
+        level = 10
+    return [level, expertise, reasoning, comprehension]
 
     score = 0
     if user_task["final_answer"] == val["Final answer"]:

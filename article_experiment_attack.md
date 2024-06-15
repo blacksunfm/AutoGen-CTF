@@ -44,14 +44,6 @@ autogenbench run Tasks/gpt-3.5-AttackAgents__ctfaia__all__20240602.jsonl
 cd tests/benchmark_test/CTFAIA
 autogenbench tabulate Results/gpt-3.5-AttackAgents__ctfaia__all__20240602 -o
 ```
-```sh
-cd tests/benchmark_test/CTFAIA
-autogenbench tabulate Results/gpt-3.5-AttackAgents__ctfaia__all__20240602__bak -o
-```
-```sh
-cd tests/benchmark_test/CTFAIA
-autogenbench tabulate Results/gpt-3.5-AttackAgents__ctfaia__all__20240602_5_3 -o
-```
 
 
 ```sh
@@ -98,9 +90,48 @@ autogenbench tabulate Results/Qwen1.5-110B-Chat-AttackAgents__ctfaia__all__20240
 ```
 
 
+```sh
+export OAI_CONFIG_LIST=$(cat ./OAI_CONFIG_LIST)
+cd tests/benchmark_test/CTFAIA
+autogenbench run Tasks/deepseek-chat-AttackAgents__ctfaia__all__20240602.jsonl
+```
+```sh
+cd tests/benchmark_test/CTFAIA
+autogenbench tabulate Results/deepseek-chat-AttackAgents__ctfaia__all__20240602 -o
+```
 
 
 
+
+```sh
+export OAI_CONFIG_LIST=$(cat ./OAI_CONFIG_LIST)
+cd tests/benchmark_test/CTFAIA
+autogenbench run Tasks/gpt-4o-AttackAgents_without_2__ctfaia__all__20240602.jsonl
+```
+```sh
+cd tests/benchmark_test/CTFAIA
+autogenbench tabulate Results/gpt-4o-AttackAgents_without_2__ctfaia__all__20240602 -o
+```
+
+```sh
+export OAI_CONFIG_LIST=$(cat ./OAI_CONFIG_LIST)
+cd tests/benchmark_test/CTFAIA
+autogenbench run Tasks/gpt-4o-AttackAgents_without_reviewcode__ctfaia__all__20240602.jsonl
+```
+```sh
+cd tests/benchmark_test/CTFAIA
+autogenbench tabulate Results/gpt-4o-AttackAgents_without_reviewcode__ctfaia__all__20240602 -o
+```
+
+```sh
+export OAI_CONFIG_LIST=$(cat ./OAI_CONFIG_LIST)
+cd tests/benchmark_test/CTFAIA
+autogenbench run Tasks/gpt-4o-AttackAgents_without_reconnoiter__ctfaia__all__20240602.jsonl
+```
+```sh
+cd tests/benchmark_test/CTFAIA
+autogenbench tabulate Results/gpt-4o-AttackAgents_without_reconnoiter__ctfaia__all__20240602 -o
+```
 
 
 

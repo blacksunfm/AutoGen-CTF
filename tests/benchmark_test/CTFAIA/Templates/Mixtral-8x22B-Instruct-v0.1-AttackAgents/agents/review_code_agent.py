@@ -93,7 +93,7 @@ class ReviewCodeAgent(ConversableAgent):
             while True:
                 extract_target_prompt = f"""Consider the following important questions:
 
-                - Does the code you want to review come from github? What is the url detail?
+                - Does the code you want to review come from github? What is the github url? If github address is not given, then github code must not be reviewed.
                 - Whether the code you want to review exists in the history message? Extract the complete code detail if yes.
 
                 Please output an answer in pure JSON format according to the following schema. The JSON object must be parsable as-is. DO NOT OUTPUT ANYTHING OTHER THAN JSON, DO NOT USE CODE BLOCK, AND DO NOT DEVIATE FROM THIS SCHEMA:
@@ -106,6 +106,7 @@ class ReviewCodeAgent(ConversableAgent):
                     }}
                 """
                 _messages.append({"role": "user", "content": extract_target_prompt, "name": sender.name})
+                # print(json.dumps(_messages, indent=4))
                 response = self.client.create(
                     messages=_messages,
                     cache=self.client_cache,
